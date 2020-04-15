@@ -4,27 +4,32 @@ import Search from './Search'
 import axios from 'axios'
 import MoviesList from './MoviesList'
 import {BrowserRouter, Route, Switch} from 'react-router-dom'
-import Home from './Home'
-import MovieInfo from './MovieInfo'
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      
+      movies: []
     }
+
+    this.getMovies = this.getMovies.bind(this)
   }
   
+  async getMovies (searchText) {
+    const apiKey = '313899ee'
+    let response = await axios.get(`http://www.omdbapi.com/?s=${searchText}&apiKey=${apiKey}`)
+    let movies = response.data.Search
+    this.setState({
+      movies
+    })
+  }
+
   render() {
     return (
-        <BrowserRouter>
           <div className="App">
-            <Switch>
-              <Route exact path='/' component={Home} />
-              <Route path='/:movie_id' component={MovieInfo} /> 
-            </Switch>
+              <Search getMovies={this.getMovies}/>
+              <MoviesList movies={this.state.movies}/>
           </div>
-        </BrowserRouter>
       );
     }
 }
